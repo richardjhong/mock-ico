@@ -1,24 +1,25 @@
 import { ethers } from "hardhat";
+import "dotenv/config";
+import { CRYPTO_DEVS_NFT_CONTRACT_ADDRESS } from "../constants";
 
-async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const unlockTime = currentTimestampInSeconds + 60;
+const main = async () => {
+  const cryptoDevsNFTContract = CRYPTO_DEVS_NFT_CONTRACT_ADDRESS;
+  const cryptoDevsTokenContract = await ethers.getContractFactory("CryptoDevToken");
 
-  const lockedAmount = ethers.utils.parseEther("0.001");
-
-  const Lock = await ethers.getContractFactory("Lock");
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
-
-  await lock.deployed();
-
-  console.log(
-    `Lock with ${ethers.utils.formatEther(lockedAmount)}ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`
+  const deployedCryptoDevsTokenContract = await cryptoDevsTokenContract.deploy(
+    cryptoDevsNFTContract
   );
-}
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+  await deployedCryptoDevsTokenContract.deployed();
+  console.log("Crypto Devs Token Contract Address: ", deployedCryptoDevsTokenContract.address);
+};
+
+main()
+  .then(() => process.exit(0))
+  .catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+
+
+  //0x54C56E4f89314Dea52F5c4A1cb61C2F586d1ccBF
